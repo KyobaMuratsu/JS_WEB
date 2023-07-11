@@ -4,7 +4,11 @@ function show(log) {
 
 const lista = document.getElementById("lista");
 const formulario = document.getElementById("novoItem");
-const itens = localStorage.getItem("itens") || [];
+const itens = JSON.parse(localStorage.getItem("itens")) || [];
+
+itens.forEach((params) => {
+    criarItem(params)
+})
 
 formulario.addEventListener("submit", (evento) => {
     evento.preventDefault();
@@ -12,35 +16,32 @@ formulario.addEventListener("submit", (evento) => {
     const nome = evento.target.elements['nome'];
     const quantidade = evento.target.elements['quantidade'];
 
-    criarItem(nome.value, quantidade.value);
+    const itematual = {
+        "nome": nome.value,
+        "quantidade": quantidade.value
+    }
+
+    criarItem(itematual);
+
+    itens.push(itematual);
+
+    localStorage.setItem("itens", JSON.stringify(itens));
 
     nome.value = "";
     quantidade.value = "";
     
 });
 
-function criarItem(nome, quantidade) {
-    show(nome);
-    show(quantidade);
-
-    const item = document.createElement('li');
-    item.classList.add("item");
+function criarItem(item) {
+    const novoitem = document.createElement('li');
+    novoitem.classList.add("item");
     
     const numeroItem = document.createElement('strong');
-    numeroItem.innerHTML = quantidade;
+    numeroItem.innerHTML = item.quantidade;
+    novoitem.appendChild(numeroItem);
 
-    item.appendChild(numeroItem);
-    item.innerHTML += nome;
+    novoitem.innerHTML += item.nome;
 
-    lista.appendChild(item);
+    lista.appendChild(novoitem);
 
-    const itematual = {
-        "nome": nome,
-        "quantidade": quantidade
-    }
-
-    itens.push(itematual);
-
-
-    localStorage.setItem("itens", JSON.stringify(itens));
 }
